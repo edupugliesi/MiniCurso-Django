@@ -1,10 +1,8 @@
-from django.shortcuts import render
-
-# Create your views here.
-
-
-from django.http import HttpResponse
+from django.shortcuts import redirect, render
+from .models import Transacao
 import datetime
+from .forms import TransacaoForm
+
 
 
 def home(request):
@@ -16,4 +14,16 @@ def home(request):
     
     return render(request, 'contas/home.html', data)
 
+def listagem(request):
+    data = {}
+    data['transacoes'] = Transacao.objects.all()
+    return render(request, 'contas/listagem.html', data)
+
+def nova_transacao(request):
+    form = TransacaoForm(request.POST or None)
+
+    if form.is_valid():
+        form.save()
+        return redirect('listagem')
+    return render(request, 'contas/form.html', {'form': form})
 
